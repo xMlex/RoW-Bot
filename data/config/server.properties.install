@@ -1,0 +1,29 @@
+﻿# ================================================================
+# General server setting
+# ================================================================
+# Database info
+db_driver=com.mysql.jdbc.Driver
+db_url=jdbc:mysql://{dbhost}/{dbscheme}?zeroDateTimeBehavior=convertToNull&useUnicode=yes&characterEncoding=UTF-8
+db_login={dbuser}
+db_password={dbpass}
+db_maximum_connections=4
+# Через сколько секунд после последней активности будут закрыватся соединения с базой, по умолчанию 600 (10 минут) # данный параметр важно согласовывать с настройками в самом mysql сервере, параметр interactive_timeout # насколько известно мне по умолчанию параметр interactive_timeout имеет значение 28800 (8 часов)
+db_max_idle_connection_timeout=15
+# Интервал проверки неактивных соединений, по умолчанию 60 (1 минута) # При условии стабильного соединения с базой и корректной настроки MaxIdleConnectionTimeout, можно выставлять 0 (не проверять)
+db_idle_connection_test_period=10
+
+# *** ROW ***
+row_account_manager_refresh=1200
+row_debug={row_debug}
+row_debug_sigin={row_debug_sigin}
+row_client_version=591
+row_client_type=1
+row_static_load_key="dGVd/B0/tINf31e3QPxoqQ=="
+# Basic
+debug={debug}
+telegram_chat_id=82404734
+telegram_token=asd:a-asdasd
+# Thread Pool Manager
+thread_pool_manager_purge_timeout=1300
+thread_pool_count=2
+thread_pool_schedule_count=2

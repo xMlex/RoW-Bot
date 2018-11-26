@@ -1,0 +1,22 @@
+{
+  "apps": [
+    {
+      "name": "RowBot-Java",
+      "args": [
+        "-server",
+        "-Dfile.encoding=UTF-8",
+        "-Xms16m",
+        "-cp",
+        "/home/mlex/IdeaProjects/row/target/bot-1.0.1-jar-with-dependencies.jar",
+        "ru.xmlex.row.Test"
+      ],
+      "env": {
+      },
+      "script": "/usr/bin/java",
+      "node_args": [],
+      "log_date_format": "YYYY.MM.DD HH:mm:ss",
+      "exec_interpreter": "none",
+      "exec_mode": "fork"
+    }
+  ]
+}

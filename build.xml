@@ -1,0 +1,178 @@
+<project name="Server" default="dist" basedir=".">
+    <description>Russia Smolensk Mlex dev</description>
+
+    <property name="src" location="java"/>
+    <property name="lib" location="libs"/>
+    <property name="build" location="build"/>
+    <property name="build.classes" location="${build}/classes"/>
+    <property name="build.dist" location="${build}/distr"/>
+    <property name="build.revision" value="1.0"/>
+    <property name="jar_name" location="${build}/row-client.jar"/>
+
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="clean" description="Remove the output directories">
+        <delete dir="${build.dist}"/>
+    </target>
+
+    <target name="cleanclasses" description="Remove the classes directories">
+        <delete dir="${build.classes}"/>
+    </target>
+
+    <target name="cc" description="Remove the classes directories">
+        <delete dir="${build}/classes"/>
+    </target>
+
+    <target name="init" description="Create the output directories.">
+        <!--<mkdir dir="${build}"/>-->
+        <mkdir dir="${build.classes}"/>
+        <mkdir dir="${build.dist}"/>
+        <mkdir dir="${build.dist}/data/cookies"/>
+    </target>
+
+    <target name="compile" depends="init" description="Compile the source.">
+
+        <javac destdir="${build.classes}" optimize="on" source="1.7" target="1.7" encoding="UTF-8"
+               includeantruntime="false" nowarn="off">
+            <compilerarg value="-Xlint:all">
+            </compilerarg>
+            <src path="${src}"/>
+            <classpath refid="classpath"/>
+        </javac>
+
+    </target>
+
+    <target name="compile_scripts" depends="jar" description="Compile the source.">
+
+        <copy todir="${lib}">
+            <fileset dir="${build}">
+                <include name="${jar_name}"/>
+            </fileset>
+        </copy>
+
+        <mkdir dir="${build.scripts}"/>
+        <javac destdir="${build.scripts}" optimize="on" debug="on" source="1.7" target="1.7" encoding="UTF-8"
+               includeantruntime="false" nowarn="off">
+            <compilerarg value="-Xlint:all">
+            </compilerarg>
+            <src path="data"/>
+            <classpath refid="classpath"/>
+        </javac>
+
+        <delete file="${jar_name}"/>
+    </target>
+
+    <target name="jar" depends="clean,compile" description="Create the jar file">
+
+        <tstamp>
+            <format property="build.tstamp" pattern="yyyy.MM.dd HH:mm"/>
+        </tstamp>
+
+        <concat destfile="${build.dist}/config/xmlex-version.properties">
+            builddate=${build.tstamp}
+        </concat>
+
+        <concat destfile="${build}/classes/xmlex/xmlex-version.properties">
+            builddate=${build.tstamp}
+            user=${user.name} ${user.dir} ${user.timezone}
+            os=${os.name} ${os.version} ${os.arch}
+            java=${java.version} ${java.vendor}
+            vm=${java.vm.name} ${java.vm.version}
+        </concat>
+
+        <jar destfile="${jar_name}" level="9">
+            <fileset dir="${build.classes}"/>
+            <manifest>
+                <attribute name="Main-Class" value="xmlex.StartServer"/>
+                <attribute name="Class-Path" value=". "/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="jar_update" depends="cleanclasses, compile" description="Create the jar file">
+
+        <tstamp>
+            <format property="build.tstamp" pattern="yyyy.MM.dd HH:mm"/>
+        </tstamp>
+
+        <concat destfile="${build}/classes/config/version.properties">
+            version=${build.revision}
+            builddate=${build.tstamp}
+            user=${user.name} ${user.dir} ${user.timezone}
+            os=${os.name} ${os.version} ${os.arch}
+            java=${java.version} ${java.vendor}
+            vm=${java.vm.name} ${java.vm.version}
+        </concat>
+
+        <jar destfile="${build}/${jar_name}" level="9">
+            <fileset dir="${build.classes}"/>
+            <manifest>
+                <attribute name="Main-Class" value="ru.xmlex.Server"/>
+                <attribute name="Class-Path" value=". "/>
+            </manifest>
+        </jar>
+
+        <copy todir="${build.dist}" preservelastmodified="true">
+            <fileset dir="${build}">
+                <include name="${jar_name}"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="dist_common" depends="jar">
+
+        <copy todir="${build.dist}" preservelastmodified="true">
+            <fileset dir="${src}">
+                <include name="*.sh"/>
+                <include name="*.bat"/>
+                <include name="*.json"/>
+                <include name="*.conf"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${build.dist}/backup"/>
+        <mkdir dir="${build.dist}/log"/>
+        <mkdir dir="${build.dist}/config"/>
+        <mkdir dir="${build.dist}/config/defaults"/>
+        <copy todir="${build.dist}/config" preservelastmodified="true">
+            <fileset dir="data/config">
+                <include name="xmlex-version.properties"/>
+            </fileset>
+        </copy>
+
+        <mkdir dir="${build.dist}/config"/>
+        <mkdir dir="${build.dist}/config"/>
+        <copy todir="${build.dist}/config" preservelastmodified="true">
+            <fileset dir="data/config">
+                <include name="*.properties"/>
+                <include name="console.cfg"/>
+            </fileset>
+        </copy>
+        <!-- LIBS -->
+        <mkdir dir="${build.dist}/lib"/>
+        <copy todir="${build.dist}/lib" preservelastmodified="true">
+            <fileset dir="${lib}">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+        <copyfile dest="${build.dist}/lib/server.jar" src="${jar_name}"/>
+        <mkdir dir="${build.dist}/data"/>
+        <!-- <copy todir="${build.dist}/data" preservelastmodified="true">
+            <fileset dir="data">
+                <include name="**/*.*" /> -->
+        <!-- <exclude name="scripts/**/*.java"/> -->
+        <!-- </fileset>
+        </copy> -->
+    </target>
+
+    <target name="dist" depends="dist_common">
+        <!-- <copy todir="${build.dist}/data" preservelastmodified="true">
+            <fileset dir="data">
+                <include name="scripts/**/*.java" />
+            </fileset>
+        </copy> -->
+    </target>
+</project>
